@@ -1,3 +1,4 @@
+---
 # To contribute improvements to CI/CD templates, please follow the Development guide at:
 # https://docs.gitlab.com/ee/development/cicd/templates.html
 # This specific template is located at:
@@ -9,10 +10,76 @@
 # This template uses one generic job with conditional builds
 # for the default branch and all other (MR) branches.
 
+stages:
+  - lint
+  - build
+  - test
+  - deploy
+
+pre-commit:
+  image: fxinnovation/pre-commit:latest
+  stage: lint
+  script:
+    - run -a
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - .pre-commit-config.yaml
+
 docker-build:
   # Use the official docker image.
   image: docker:latest
   stage: build
+  services:
+    - docker:dind
+  # Default branch leaves tag empty (= latest tag)
+  # All other branches are tagged with the escaped branch name (commit ref slug)
+  script:
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        tag=""
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+      else
+        tag=":$CI_COMMIT_REF_SLUG"
+        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+      fi
+    - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
+  # Run this job in a branch where a Dockerfile exists
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
+
+docker-test:
+  # Use the official docker image.
+  image: docker:latest
+  stage: test
+  services:
+    - docker:dind
+  # Default branch leaves tag empty (= latest tag)
+  # All other branches are tagged with the escaped branch name (commit ref slug)
+  script:
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        tag=""
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+      else
+        tag=":$CI_COMMIT_REF_SLUG"
+        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+      fi
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "id" | grep -F "(nextcloud)"
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "id -u" | grep "960"
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "test -e /usr/sbin/php-fpm7"
+  # Run this job in a branch where a Dockerfile exists
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
+
+docker-deploy:
+  # Use the official docker image.
+  image: docker:latest
+  stage: deploy
   services:
     - docker:dind
   before_script:
@@ -28,7 +95,6 @@ docker-build:
         tag=":$CI_COMMIT_REF_SLUG"
         echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
       fi
-    - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
     - docker push "$CI_REGISTRY_IMAGE${tag}"
   # Run this job in a branch where a Dockerfile exists
   rules:
