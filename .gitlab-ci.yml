@@ -17,10 +17,10 @@ stages:
   - deploy
 
 pre-commit:
-  image: fxinnovation/pre-commit:latest
+  image: flywheel/qa-ci
   stage: lint
   script:
-    - run -a
+    - pre-commit run -a
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
