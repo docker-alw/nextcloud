@@ -18,7 +18,7 @@ pre-commit:
   image: flywheel/qa-ci
   stage: lint
   script:
-    - pre-commit run -a
+    - pre-commit run -a --color always --show-diff-on-failure
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
@@ -43,11 +43,18 @@ docker-build:
         tag=":$CI_COMMIT_REF_SLUG"
         echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
       fi
+    - printf "\e[0Ksection_start:%s:image_build\r\e[0K\e[1;36mImage build\e[0m\n" "$(date +%s)"
     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
-    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "id" | grep -F "(nextcloud)"
-    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "id -u" | grep "960"
+    - printf "\e[0Ksection_end:%s:image_build\r\e[0K\n" "$(date +%s)"
+    - printf "\e[0Ksection_start:%s:image_test\r\e[0K\e[1;36mImage test\e[0m\n" "$(date +%s)"
     - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "test -e /usr/sbin/php-fpm7"
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "test -L /var/log/php7/error.log"
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "ls -l /var/log/php7/error.log" |
+      grep "/dev/stderr"
+    - printf "\e[0Ksection_end:%s:image_test\r\e[0K\n" "$(date +%s)"
+    - printf "\e[0Ksection_start:%s:image_push\r\e[0K\e[1;36mImage push\e[0m\n" "$(date +%s)"
     - docker push "$CI_REGISTRY_IMAGE${tag}"
+    - printf "\e[0Ksection_end:%s:image_push\r\e[0K\n" "$(date +%s)"
   # Run this job in a branch where a Dockerfile exists
   rules:
     - if: $CI_COMMIT_BRANCH

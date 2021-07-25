@@ -37,14 +37,13 @@ RUN set -x \
 		php7-xmlreader \
 		php7-xmlwriter \
 		php7-zip \
-		php7-zlib
+		php7-zlib \
+	&& ln -s /dev/stderr /var/log/php7/error.log
 
 COPY php-fpm.conf /etc/php7/php-fpm.d/www.conf
 
 VOLUME /app
 
 EXPOSE 9000
-
-USER nextcloud
 
 CMD ["/usr/sbin/php-fpm7", "-F"]
