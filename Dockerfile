@@ -1,10 +1,13 @@
 # vim:set ft=dockerfile:
 FROM registry.gitlab.com/docker-alw/nextcloud-php-modules:latest
 
-RUN set -x \
-	&& apk --no-cache add php81-fpm
+ARG PHP_VERSION=81
 
-COPY php-fpm.conf /etc/php81/php-fpm.d/www.conf
+RUN set -x \
+	&& apk --no-cache add php${PHP_VERSION}-fpm
+
+COPY php-fpm.conf /etc/php${PHP_VERSION}/php-fpm.d/www.conf
+COPY cache.conf /etc/php${PHP_VERSION}/conf.d/opcache.ini
 
 VOLUME /app
 
