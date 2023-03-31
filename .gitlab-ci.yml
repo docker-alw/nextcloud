@@ -47,9 +47,9 @@ docker-build:
     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
     - printf "\e[0Ksection_end:%s:image_build\r\e[0K\n" "$(date +%s)"
     - printf "\e[0Ksection_start:%s:image_test\r\e[0K\e[1;36mImage test\e[0m\n" "$(date +%s)"
-    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "test -e /usr/sbin/php-fpm7"
-    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "test -L /var/log/php7/error.log"
-    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "ls -l /var/log/php7/error.log" |
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "test -e /usr/sbin/php-fpm81"
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "test -L /var/log/php81/error.log"
+    - docker run --rm "$CI_REGISTRY_IMAGE${tag}" /bin/sh -c "ls -l /var/log/php81/error.log" |
       grep "/dev/stderr"
     - printf "\e[0Ksection_end:%s:image_test\r\e[0K\n" "$(date +%s)"
     - printf "\e[0Ksection_start:%s:image_push\r\e[0K\e[1;36mImage push\e[0m\n" "$(date +%s)"
