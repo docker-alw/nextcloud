@@ -1,8 +1,10 @@
 # vim:set ft=dockerfile:
+# hadolint ignore=DL3007
 FROM registry.gitlab.com/docker-alw/nextcloud-php-modules:latest
 
 ARG PHP_VERSION=81
 
+# hadolint ignore=DL3018
 RUN set -x \
 	&& apk --no-cache add php${PHP_VERSION}-fpm
 
