@@ -15,7 +15,7 @@ name: "Build Main Image"
       - php-fpm.conf
   workflow_dispatch:
   schedule:
-    - cron: '23 10 5 * *'
+    - cron: '43 10 5 * *'
 
 jobs:
   build-push:
