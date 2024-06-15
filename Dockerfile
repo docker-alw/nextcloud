@@ -2,9 +2,11 @@
 # hadolint ignore=DL3007
 FROM ghcr.io/docker-alw/nextcloud-php-modules:latest
 
-COPY test.sh /test.sh
-
 ARG PHP_VERSION=83
+
+RUN echo "PHP_VERSION=${PHP_VERSION}" > /php_version
+
+COPY test.sh /test.sh
 
 # hadolint ignore=DL3018
 RUN apk --no-cache add php${PHP_VERSION}-fpm
