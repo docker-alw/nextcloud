@@ -11,6 +11,8 @@ name: "Build Main Image"
       - .github/workflows/build_image.yml
       - Dockerfile
       - test.sh
+      - cache.conf
+      - php-fpm.conf
   workflow_dispatch:
   schedule:
     - cron: '23 10 5 * *'

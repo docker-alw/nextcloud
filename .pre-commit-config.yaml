@@ -26,3 +26,22 @@ repos:
           - 'DL3013'
           - '--ignore'
           - 'DL3018'
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/maxwinterstein/shfmt-py
+    rev: v3.7.0.1
+    hooks:
+      - id: shfmt
+        args:
+          - "--binary-next-line"
+          - "--case-indent"
+          - "--indent"
+          - "4"
+          - "--space-redirects"
+  - repo: https://github.com/sirosen/check-jsonschema
+    rev: 0.28.5
+    hooks:
+      - id: check-github-workflows
+      - id: check-github-actions
