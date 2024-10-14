@@ -41,7 +41,7 @@ repos:
           - "4"
           - "--space-redirects"
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.29.3
+    rev: 0.29.4
     hooks:
       - id: check-github-workflows
       - id: check-github-actions
