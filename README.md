@@ -23,6 +23,6 @@ To run the container with a modified PHP-FPM configuration use:
 
 ```bash
 docker network create -d bridge --subnet 10.0.1.0/24 "net-app"
-docker create --network net-app --name "nextcloud" -v "/path/to/nextcloud-source-code/:/app/nextcloud/" -v "/path/to/php-fpm/nextcloud.conf:/etc/php7/php-fpm.d/www.conf:ro" "ghcr.io/docker-alw/nextcloud"
+docker create --network net-app --name "nextcloud" -v "/path/to/nextcloud-source-code/:/app/nextcloud/" -v "/path/to/php-fpm/nextcloud.conf:/etc/php85/php-fpm.d/www.conf:ro" "ghcr.io/docker-alw/nextcloud"
 docker start nextcloud
 ```
